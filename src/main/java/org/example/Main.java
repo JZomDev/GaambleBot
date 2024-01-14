@@ -41,6 +41,7 @@ public class Main
 
 			api.updateActivity("It's gamba time");
 			api.addMessageCreateListener(new DiceDommand(logger));
+			api.addMessageCreateListener(new RuleCommand(logger));
 		}
 	}
 }
