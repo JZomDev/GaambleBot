@@ -1,5 +1,7 @@
 package org.example;
 
+import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,6 +12,8 @@ public class Main
 {
 
 	private static final Logger logger = LogManager.getLogger(Main.class);
+
+	public static HashMap<Long, BigInteger> storedNumbers = new HashMap<>();
 
 	public static String DISCORD_TOKEN ="";
 	static
@@ -43,5 +47,15 @@ public class Main
 			api.addMessageCreateListener(new DiceDommand(logger));
 			api.addMessageCreateListener(new RuleCommand(logger));
 		}
+	}
+
+	public static BigInteger getLastFromServer(Long server)
+	{
+		return storedNumbers.getOrDefault(server, null);
+	}
+
+	public static void storeLastFromServer(Long server, BigInteger value)
+	{
+		storedNumbers.put(server, value);
 	}
 }

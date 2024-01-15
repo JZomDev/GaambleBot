@@ -28,32 +28,59 @@ public class DiceDommand implements MessageCreateListener
 		if (event.getServer().isPresent())
 		{
 			String msg = event.getMessageContent();
+
 			if (msg.startsWith("!dice") && event.getMessageAuthor().isUser())
 			{
+				long serverID = event.getServer().get().getId();
 				String[] splitMessage = msg.split(" ");
 				if (splitMessage.length == 1)
 				{
-					event.getChannel().sendMessage("Command is !dice #")
+					event.getChannel().sendMessage("Command is !dice # & !dice next")
 						.exceptionally(ExceptionLogger.get(MissingPermissionsException.class));
 				}
 				else if (splitMessage.length == 2)
 				{
-					try
+					String nextPart = splitMessage[1];
+					if (nextPart.equalsIgnoreCase("next"))
 					{
-						BigInteger bigInteger = new BigInteger(splitMessage[1]);
+						if (Main.getLastFromServer(serverID) != null)
+						{
+							BigInteger randomBigInt = new BigInteger("1").add(nextRandomBigInteger(Main.getLastFromServer(serverID)));
 
-						event.getChannel().sendMessage(String.valueOf( new BigInteger("1").add(nextRandomBigInteger(bigInteger))))
-							.exceptionally(ExceptionLogger.get(MissingPermissionsException.class));
+							Main.storeLastFromServer(serverID, randomBigInt);
+
+							event.getChannel().sendMessage(String.valueOf(randomBigInt))
+								.exceptionally(ExceptionLogger.get(MissingPermissionsException.class));
+						}
+						else
+						{
+							event.getChannel().sendMessage("Couldn't find previous number")
+								.exceptionally(ExceptionLogger.get(MissingPermissionsException.class));
+						}
 					}
-					catch (Exception e)
+					else
 					{
-						event.getChannel().sendMessage("Command is !dice ###")
-							.exceptionally(ExceptionLogger.get(MissingPermissionsException.class));
+						try
+						{
+							BigInteger bigInteger = new BigInteger(nextPart);
+
+							BigInteger randomBigInt = new BigInteger("1").add(nextRandomBigInteger(bigInteger));
+
+							Main.storeLastFromServer(serverID, randomBigInt);
+
+							event.getChannel().sendMessage(String.valueOf(randomBigInt))
+								.exceptionally(ExceptionLogger.get(MissingPermissionsException.class));
+						}
+						catch (Exception e)
+						{
+							event.getChannel().sendMessage("Command is !dice ###")
+								.exceptionally(ExceptionLogger.get(MissingPermissionsException.class));
+						}
 					}
 				}
 				else
 				{
-					event.getChannel().sendMessage("Command is !dice #")
+					event.getChannel().sendMessage("Command is !dice # & !dice next")
 						.exceptionally(ExceptionLogger.get(MissingPermissionsException.class));
 				}
 			}
