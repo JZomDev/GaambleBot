@@ -1,10 +1,12 @@
-package org.example;
+package org.gamblebot;
 
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.gamblebot.listeners.DiceDommand;
+import org.gamblebot.listeners.RuleCommand;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 
@@ -15,18 +17,21 @@ public class Main
 
 	public static HashMap<Long, BigInteger> storedNumbers = new HashMap<>();
 
-	public static String DISCORD_TOKEN ="";
+	public static String DISCORD_TOKEN = "";
+
 	static
 	{
-		Map<String, String> env_var=System.getenv();
+		Map<String, String> env_var = System.getenv();
 
-		for(String envName:env_var.keySet()){
-			if(envName.equals("BOT_TOKEN"))
+		for (String envName : env_var.keySet())
+		{
+			if (envName.equals("BOT_TOKEN"))
 			{
 				DISCORD_TOKEN = env_var.get(envName);
 			}
 		}
 	}
+
 	/**
 	 * The entrance point of our program.
 	 *
@@ -40,12 +45,22 @@ public class Main
 		}
 		else
 		{
-			DiscordApi api = new DiscordApiBuilder().setToken(DISCORD_TOKEN).setWaitForServersOnStartup(false).setAllIntents().login().join();
+			DiscordApiBuilder builder = new DiscordApiBuilder();
+			builder.setAllIntents();
+			builder.setToken(DISCORD_TOKEN);
+			builder.setTrustAllCertificates(false);
+			builder.setWaitForServersOnStartup(false);
+			builder.setWaitForUsersOnStartup(false);
+
+			builder.addServerBecomesAvailableListener(event -> {
+				DiscordApi thisServerApi = event.getApi();
+				thisServerApi.addMessageCreateListener(new DiceDommand());
+				thisServerApi.addMessageCreateListener(new RuleCommand());
+			});
+
+			DiscordApi api = builder.login().join();
 			logger.info("You can invite me by using the following url: " + api.createBotInvite());
 
-			api.updateActivity("It's gamba time");
-			api.addMessageCreateListener(new DiceDommand(logger));
-			api.addMessageCreateListener(new RuleCommand(logger));
 		}
 	}
 

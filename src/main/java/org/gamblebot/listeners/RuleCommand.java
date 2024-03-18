@@ -1,5 +1,6 @@
-package org.example;
+package org.gamblebot.listeners;
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.exception.MissingPermissionsException;
@@ -9,17 +10,8 @@ import org.javacord.api.util.logging.ExceptionLogger;
 public class RuleCommand implements MessageCreateListener
 {
 
-	Logger logger;
+	private static final Logger logger = LogManager.getLogger(RuleCommand.class);
 
-	public RuleCommand(Logger logger)
-	{
-		this.logger = logger;
-	}
-
-	/*
-	 * This command can be used to display information about the user who used the command.
-	 * It's a good example for the MessageAuthor, MessageBuilder and ExceptionLogger class.
-	 */
 	@Override
 	public void onMessageCreate(MessageCreateEvent event)
 	{

@@ -4,10 +4,10 @@ plugins {
     application
 }
 
-group = "org.javacord.cryptowatcher"
+group = "org.gamblebot"
 version = ""
 
-description = "An example for the Javacord library."
+description = "A !dice bot for discord"
 
 java {
     sourceCompatibility = VERSION_11
@@ -25,14 +25,14 @@ dependencies {
 }
 
 application {
-    mainClass.set("org.example.Main")
+    mainClass.set("org.gamblebot.Main")
 }
 val fatJar = task("fatJar", type = Jar::class) {
     baseName = "${project.name}"
     manifest {
         attributes["Implementation-Title"] = "Gradle Jar File Example"
         attributes["Implementation-Version"] = version
-        attributes["Main-Class"] = "org.example.Main"
+        attributes["Main-Class"] = "org.gamblebot.Main"
     }
     from(configurations.runtimeClasspath.get().map({ if (it.isDirectory) it else zipTree(it) }))
     with(tasks.jar.get() as CopySpec)
